@@ -1,6 +1,6 @@
 # CloudRISE Kubernetes Training
 
-Training companion site for the **CloudRISE Kubernetes Foundation Programme** — delivered by [Steve Wade Consulting](https://stevewade.co.uk) for Business Solutions d.o.o.
+Training companion site for the **CloudRISE Kubernetes Foundation Programme** — delivered by Steve Wade Consulting for Business Solutions d.o.o.
 
 ## What This Is
 
@@ -25,17 +25,10 @@ A self-hosted MkDocs site that attendees follow along with during the training. 
 ## Running Locally
 
 ```bash
-pip install mkdocs mkdocs-material
-mkdocs serve
+make serve
 ```
 
 Then open [http://localhost:8000](http://localhost:8000).
-
-## Deploying to GitHub Pages
-
-```bash
-mkdocs gh-deploy
-```
 
 ## Structure
 
