@@ -1,0 +1,105 @@
+site_name: "CloudRISE Kubernetes Training"
+site_description: "RKE2, Rancher & GitOps — Training Guide for Business Solutions d.o.o."
+site_author: "Steve Wade"
+site_url: https://swade1987.github.io/bs-k8s-training
+repo_name: swade1987/bs-k8s-training
+repo_url: https://github.com/swade1987/bs-k8s-training
+edit_uri: ""
+site_dir: public
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: deep purple
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: deep purple
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - content.code.copy
+    - content.code.select
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.footer
+    - toc.follow
+    - search.highlight
+    - search.suggest
+  icon:
+    repo: fontawesome/brands/github
+  font:
+    text: Inter
+    code: JetBrains Mono
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - tables
+  - attr_list
+  - md_in_html
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - def_list
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+nav:
+  - Home: index.md
+  - "Lab Environment": lab-environment.md
+  - "1. Concepts":
+    - "Kubernetes Refresher": 01-concepts/kubernetes.md
+    - "Why RKE2?": 01-concepts/rke2.md
+    - "Understanding Rancher": 01-concepts/rancher.md
+    - "GitOps & Flux": 01-concepts/gitops.md
+    - "How It All Fits Together": 01-concepts/architecture.md
+    - "Terminology Reference": 01-concepts/terminology.md
+  - "2. Management Cluster":
+    - "Overview": 02-management-cluster/index.md
+    - "Phase 0 — Generate Token": 02-management-cluster/phase0-token.md
+    - "Phase 1 — Prepare All Nodes": 02-management-cluster/phase1-prep.md
+    - "Phase 2 — First Master (k01m1)": 02-management-cluster/phase2-first-master.md
+    - "Phase 3 — Join Masters": 02-management-cluster/phase3-join-masters.md
+    - "Phase 4 — Join Workers": 02-management-cluster/phase4-join-workers.md
+    - "Phase 5 — Install Helm": 02-management-cluster/phase5-helm.md
+    - "Phase 6 — Install cert-manager": 02-management-cluster/phase6-cert-manager.md
+    - "Phase 7 — Install Rancher": 02-management-cluster/phase7-rancher.md
+  - "3. Downstream Clusters":
+    - "Overview": 03-downstream-clusters/index.md
+    - "Prepare Your VMs": 03-downstream-clusters/prepare-vms.md
+    - "Create Cluster in Rancher": 03-downstream-clusters/create-cluster.md
+    - "Register Nodes": 03-downstream-clusters/register-nodes.md
+    - "Post-Registration": 03-downstream-clusters/post-registration.md
+  - "4. Workstation Setup":
+    - "Install Tools": 04-workstation-setup/install-tools.md
+    - "Get Your Kubeconfig": 04-workstation-setup/kubeconfig.md
+    - "Verify Access": 04-workstation-setup/verify.md
+  - "5. GitOps with Flux":
+    - "Coming Soon": 05-gitops/index.md
+
+extra:
+  social: []
+  generator: false
+
+copyright: "&copy; 2026 Steve Wade Consulting — Prepared for Business Solutions d.o.o."
