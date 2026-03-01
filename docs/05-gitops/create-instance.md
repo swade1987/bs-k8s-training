@@ -1,12 +1,43 @@
 # Create a FluxInstance
 
-The FluxInstance tells the operator **which Flux controllers to deploy** and **where to sync from.** After this step, the cluster is fully managed through Git.
+The FluxInstance tells the operator **which Flux controllers to deploy** and **where to sync from.** After this step, the cluster is bootstrapped and managed through Git.
 
 ---
 
-## Step 1: Set Up the Fleet Repository
+## The Four-Repo Model
 
-Clone the fleet repository:
+Unlike the single-repo approach in the Flux docs, we split configuration by concern. This gives clear ownership and avoids a single monolithic repo that confuses everyone.
+
+| Repository                | Owner | Purpose |
+|---------------------------|-------|---------|
+| **k8s-fleet**             | Steve / Platform Lead | Flux bootstrap — FluxInstance, operator config, notifications |
+| **k8s-resources-platform** | Platform Engineering | Cluster infrastructure — ingress, monitoring, cert-manager, policies |
+| **k8s-resources-dms**     | DMS Team | Application deployment — DMS v2 config across clusters |
+| **k8s-secrets**           | Platform Engineering | Centralised secrets — encrypted with SOPS + age |
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  Your Cluster                                           │
+│                                                         │
+│  Flux watches FOUR repos:                               │
+│                                                         │
+│  k8s-fleet ─────────────→ Bootstrap + Flux self-config  │
+│  k8s-resources-platform ─→ Platform infra (ingress, etc)│
+│  k8s-resources-dms ─────→ DMS app deployments           │
+│  k8s-secrets ───────────→ Encrypted secrets (SOPS+age)  │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Why split?**
+
+- **Ownership is clear.** Platform team doesn't need access to DMS config. DMS team doesn't touch ingress controllers.
+- **Blast radius is smaller.** A bad commit to the DMS repo doesn't break platform infrastructure.
+- **Permissions are simple.** Each repo has its own access controls. The secrets repo is locked down tight.
+- **Onboarding is easier.** New developer? "Your repo is `k8s-resources-dms-bs`. That's all you need to know."
+
+---
+
+## Step 1: Clone the Fleet Repository
 
 ```bash
 git clone https://github.com/swade1987/bs-fleet.git
@@ -67,28 +98,7 @@ spec:
             value: --requeue-dependency=5s
 ```
 
----
-
-## Understanding the Config
-
-| Field | What It Does |
-|-------|-------------|
-| `distribution.version: "2.x"` | Auto-selects latest Flux 2.x stable |
-| `components` | Which Flux controllers to install |
-| `cluster.multitenant: true` | Enables tenant isolation with dedicated service accounts |
-| `cluster.networkPolicy: true` | Creates network policies to secure controller communication |
-| `sync.kind: GitRepository` | Tells Flux to watch a Git repository |
-| `sync.url` | The fleet repository to sync from |
-| `sync.path: "clusters/training"` | Only sync manifests from this directory |
-| `sync.pullSecret: "github-auth"` | Kubernetes secret with Git credentials |
-| `kustomize.patches` | Performance tuning — 10 concurrent reconciliations, faster dependency requeue |
-
-!!! info "Why multitenant?"
-    Even for a single-team setup, multitenant mode enforces better security defaults. Each namespace gets its own service account for Flux operations, preventing cross-namespace access.
-
----
-
-## Step 3: Commit and Push
+Commit and push:
 
 ```bash
 git add -A
@@ -96,96 +106,62 @@ git commit -m "Add FluxInstance for training cluster"
 git push origin main
 ```
 
-The manifest is now in Git. But Flux isn't watching yet — we need to apply it once manually to bootstrap the loop.
-
 ---
 
-## Step 4: Create the Git Authentication Secret
-
-Set your GitHub PAT as an environment variable:
+## Step 3: Create the Git Authentication Secret
 
 ```bash
 export GITHUB_TOKEN=<your-github-pat>
-```
 
-Create the secret:
-
-```bash
 flux create secret git github-auth \
   --url=https://github.com/swade1987/bs-fleet.git \
   --username=flux \
   --password=$GITHUB_TOKEN
 ```
 
-!!! warning "You need a GitHub PAT"
-    Steve will provide access details during the training. The PAT needs `repo` scope to read the fleet repository.
+!!! warning "Steve will provide PAT details during the training"
 
 ---
 
-## Step 5: Apply the FluxInstance (One Time Only)
+## Step 4: Apply the FluxInstance (One Time Only)
 
 ```bash
 kubectl apply -f clusters/training/flux-system/flux-instance.yaml
 ```
 
-This is the **only time you run kubectl apply for Flux.** From now on, Flux manages itself from Git.
+This is the **only manual kubectl apply.** From now on, Flux manages itself from Git.
 
 ---
 
-## Step 6: Watch It Come Alive
+## Step 5: Watch It Bootstrap
 
 ```bash
 kubectl -n flux-system get pods -w
 ```
 
-You'll see the four Flux controllers start up one by one:
+Wait for all controllers to show `Running`:
 
 ```
-NAME                                       READY   STATUS    RESTARTS   AGE
-flux-operator-xxxxxxxxxx-xxxxx             1/1     Running   0          5m
-source-controller-xxxxxxxxxx-xxxxx         1/1     Running   0          30s
-kustomize-controller-xxxxxxxxxx-xxxxx      1/1     Running   0          30s
-helm-controller-xxxxxxxxxx-xxxxx           1/1     Running   0          30s
-notification-controller-xxxxxxxxxx-xxxxx   1/1     Running   0          30s
+flux-operator-xxxxxxxxxx-xxxxx             1/1     Running
+source-controller-xxxxxxxxxx-xxxxx         1/1     Running
+kustomize-controller-xxxxxxxxxx-xxxxx      1/1     Running
+helm-controller-xxxxxxxxxx-xxxxx           1/1     Running
+notification-controller-xxxxxxxxxx-xxxxx   1/1     Running
 ```
 
----
-
-## Step 7: Verify
-
-### Check the FluxInstance
+### Verify
 
 ```bash
 kubectl get fluxinstance -n flux-system
-```
-
-```
-NAME   READY   STATUS                      AGE
-flux   True    Reconciliation finished     60s
-```
-
-### Check Git sync
-
-```bash
 kubectl get gitrepository -n flux-system
 kubectl get kustomization -n flux-system
 ```
 
-Both should show `Ready: True`.
-
-### Inspect the FluxReport
-
-```bash
-kubectl -n flux-system get fluxreport flux -o yaml
-```
-
-This shows controller versions, reconciler stats, and sync status.
+All should show `Ready: True`.
 
 ---
 
 ## The Bootstrap Loop
-
-Here's what just happened — and why it's powerful:
 
 ```
 1. You applied FluxInstance manually (one time)
@@ -204,35 +180,6 @@ Here's what just happened — and why it's powerful:
 ```
 
 !!! success "The loop is closed"
-    The FluxInstance manifest lives in Git. Flux is watching that same Git repo. If you change the FluxInstance in Git (add a component, change a version, adjust a patch), Flux applies the change to itself. **No more kubectl. No more Helm upgrades. Just Git.**
+    The FluxInstance lives in Git. Flux watches that Git repo. Change the FluxInstance in Git → Flux applies the change to itself. **No more kubectl. Just Git.**
 
----
-
-## What's Running Now
-
-```
-Your Cluster
-┌─────────────────────────────────────────────────────────┐
-│  flux-system namespace                                  │
-│                                                         │
-│  ┌────────────────────┐                                 │
-│  │  flux-operator     │ ← Manages the controllers       │
-│  └────────────────────┘                                 │
-│                                                         │
-│  ┌────────────────────┐  ┌──────────────────────┐       │
-│  │ source-controller  │  │ kustomize-controller │       │
-│  │ (watches Git)      │  │ (applies manifests)  │       │
-│  └────────┬───────────┘  └──────────┬───────────┘       │
-│           │                         │                    │
-│           ▼                         ▼                    │
-│  ┌────────────────────┐  ┌──────────────────────┐       │
-│  │ helm-controller    │  │notification-controller│      │
-│  │ (manages charts)   │  │ (sends alerts)       │       │
-│  └────────────────────┘  └──────────────────────┘       │
-│                                                         │
-│  GitRepository: bs-fleet.git ──→ clusters/training      │
-│  Secret: github-auth (PAT)                              │
-└─────────────────────────────────────────────────────────┘
-```
-
-Next: [Add cluster info and auto-upgrades →](cluster-config.md)
+Next: [Cluster configuration →](cluster-config.md)

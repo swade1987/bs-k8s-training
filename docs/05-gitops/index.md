@@ -10,8 +10,7 @@ Yesterday you built the infrastructure. Today you design **how to manage it at s
 - [ ] Install the Flux Operator via Helm
 - [ ] Bootstrap Flux from the fleet Git repository
 - [ ] Configure auto-upgrades and commit status notifications
-- [ ] Deploy your first application via a Git commit
-- [ ] Watch Flux self-heal when you break something
+- [ ] First GitOps deployments using your repo structure (Steve-led)
 
 ---
 
@@ -21,11 +20,11 @@ Yesterday you built the infrastructure. Today you design **how to manage it at s
 |---------|------------------|
 | **[Fleet Design](fleet-design.md)** | Naming conventions for internal + customer clusters |
 | **[Install Flux Operator](install-operator.md)** | Helm install of the Flux Operator |
-| **[Create FluxInstance](create-instance.md)** | Bootstrap Flux from the fleet repository |
+| **[Create FluxInstance](create-instance.md)** | Bootstrap Flux with the four-repo model |
 | **[Cluster Configuration](cluster-config.md)** | Runtime info, auto-upgrades, commit notifications |
-| **[First GitOps Deployment](first-deployment.md)** | Deploy an app by pushing to Git |
-| **[Self-Healing](self-healing.md)** | Break something and watch Flux fix it |
-| **[Repo Structure](repo-structure.md)** | Production patterns and open design questions |
+
+!!! info "Repo structure, deployments, and secrets"
+    The afternoon session covers your four-repo model, first GitOps deployments, and SOPS+age secrets — delivered live and tailored to your setup.
 
 ---
 

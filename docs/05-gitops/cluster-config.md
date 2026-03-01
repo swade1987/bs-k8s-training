@@ -206,5 +206,3 @@ Everything in this directory is managed by Flux. Change any file, push to Git, a
 
 !!! success "From now on, we manage this cluster solely through Git"
     No more `kubectl apply`. No more Helm upgrades. No more SSHing into nodes to make changes. **Git is the single source of truth.**
-
-Next: [Deploy your first app via Git →](first-deployment.md)
