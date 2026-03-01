@@ -21,13 +21,26 @@ By the end of this training, you will have:
 
 ## Training Structure
 
+| Day | Focus | Status |
+|-----|-------|--------|
+| **Day 1** | Infrastructure & Cluster Build | :material-check-circle: Ready |
+| **Day 2** | GitOps with Flux | :material-lock-outline: Tomorrow |
+| **Day 3** | Observability & Monitoring | :material-lock-outline: Coming soon |
+| **Day 4** | Security & Access Control | :material-lock-outline: Coming soon |
+| **Day 5** | Production Readiness | :material-lock-outline: Coming soon |
+
+[:material-arrow-right: See the full roadmap](roadmap.md)
+
+---
+
+## Day 1 Sections
+
 | Section | What You'll Learn |
 |---------|------------------|
-| **[1. Concepts](01-concepts/kubernetes.md)** | Kubernetes foundations, RKE2, Rancher architecture, GitOps |
-| **[2. Management Cluster](02-management-cluster/index.md)** | Building the RKE2 + Rancher hub (Steve-led demo) |
-| **[3. Downstream Clusters](03-downstream-clusters/index.md)** | Provisioning your own cluster through Rancher |
-| **[4. Workstation Setup](04-workstation-setup/install-tools.md)** | Connecting kubectl from your local machine |
-| **[5. GitOps with Flux](05-gitops/index.md)** | Installing Flux and deploying from Git |
+| **[Concepts](01-concepts/kubernetes.md)** | Kubernetes, RKE2, Rancher architecture, GitOps |
+| **[Management Cluster](02-management-cluster/index.md)** | Building the RKE2 + Rancher hub (Steve-led demo) |
+| **[Downstream Clusters](03-downstream-clusters/index.md)** | Provisioning your own cluster through Rancher |
+| **[Workstation Setup](04-workstation-setup/install-tools.md)** | Connecting kubectl from your local machine |
 
 ---
 

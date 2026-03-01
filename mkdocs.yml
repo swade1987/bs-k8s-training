@@ -1,11 +1,6 @@
 site_name: "CloudRISE Kubernetes Training"
 site_description: "RKE2, Rancher & GitOps — Training Guide for Business Solutions d.o.o."
 site_author: "Steve Wade"
-site_url: https://swade1987.github.io/bs-k8s-training
-repo_name: swade1987/bs-k8s-training
-repo_url: https://github.com/swade1987/bs-k8s-training
-edit_uri: ""
-site_dir: public
 
 theme:
   name: material
@@ -67,6 +62,7 @@ markdown_extensions:
 
 nav:
   - Home: index.md
+  - "Training Roadmap": roadmap.md
   - "Lab Environment": lab-environment.md
   - "1. Concepts":
     - "Kubernetes Refresher": 01-concepts/kubernetes.md
