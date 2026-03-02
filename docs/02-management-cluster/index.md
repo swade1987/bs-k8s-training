@@ -7,7 +7,7 @@
 
 ## What We're Building
 
-A **7-node RKE2 high-availability cluster** running Rancher as the management plane for all labs.
+A **7-node K3s high-availability cluster** running Rancher as the management plane for all labs.
 
 | Node | IP | Role |
 |------|-----|------|
@@ -27,9 +27,9 @@ A **7-node RKE2 high-availability cluster** running Rancher as the management pl
 
 | Phase | What | Time |
 |-------|------|------|
-| [Phase 0](phase0-token.md) | Generate shared RKE2 token | 1 min |
+| [Phase 0](phase0-token.md) | Generate shared K3s token | 1 min |
 | [Phase 1](phase1-prep.md) | Prepare all 7 nodes | 10 min |
-| [Phase 2](phase2-first-master.md) | Install RKE2 on first master (k01m1) | 5 min |
+| [Phase 2](phase2-first-master.md) | Install K3s on first server (k01m1) | 3 min |
 | [Phase 3](phase3-join-masters.md) | Join k01m2 and k01m3 | 10 min |
 | [Phase 4](phase4-join-workers.md) | Join all workers | 10 min |
 | [Phase 5](phase5-helm.md) | Install Helm | 1 min |

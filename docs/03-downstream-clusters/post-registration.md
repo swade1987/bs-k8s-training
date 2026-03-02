@@ -85,7 +85,7 @@ When all attendees have completed these steps, the Rancher dashboard should show
 ```
 Cluster                    Status    Provider    Nodes
 ─────────────────────────────────────────────────────
-local                      Active    RKE2        7      ← Management cluster
+local                      Active    K3s         7      ← Management cluster
 lab-02-aleksander          Active    Custom      7
 lab-03-ales                Active    Custom      7
 lab-04-damir               Active    Custom      7

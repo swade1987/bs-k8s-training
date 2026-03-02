@@ -22,19 +22,19 @@ systemctl enable --now iscsid
 systemctl stop ufw && systemctl disable ufw
 
 mkdir -p /etc/NetworkManager/conf.d
-cat > /etc/NetworkManager/conf.d/rke2-calico.conf << 'NM'
+cat > /etc/NetworkManager/conf.d/k3s-calico.conf << 'NM'
 [keyfile]
 unmanaged-devices=interface-name:flannel*;interface-name:cali*;interface-name:tunl*;interface-name:vxlan.calico;interface-name:vxlan-v6.calico;interface-name:wireguard.cali;interface-name:wg-v6.cali
 NM
 systemctl reload NetworkManager 2>/dev/null || true
 
-cat > /etc/modules-load.d/rke2.conf << 'MOD'
+cat > /etc/modules-load.d/k3s.conf << 'MOD'
 br_netfilter
 overlay
 MOD
 modprobe br_netfilter && modprobe overlay
 
-cat > /etc/sysctl.d/99-rke2.conf << 'SC'
+cat > /etc/sysctl.d/99-k3s.conf << 'SC'
 net.bridge.bridge-nf-call-iptables  = 1
 net.bridge.bridge-nf-call-ip6tables = 1
 net.ipv4.ip_forward                 = 1
@@ -58,19 +58,19 @@ systemctl enable --now iscsid
 systemctl stop ufw && systemctl disable ufw
 
 mkdir -p /etc/NetworkManager/conf.d
-cat > /etc/NetworkManager/conf.d/rke2-calico.conf << 'EOF'
+cat > /etc/NetworkManager/conf.d/k3s-calico.conf << 'EOF'
 [keyfile]
 unmanaged-devices=interface-name:flannel*;interface-name:cali*;interface-name:tunl*;interface-name:vxlan.calico;interface-name:vxlan-v6.calico;interface-name:wireguard.cali;interface-name:wg-v6.cali
 EOF
 systemctl reload NetworkManager 2>/dev/null || true
 
-cat > /etc/modules-load.d/rke2.conf << 'EOF'
+cat > /etc/modules-load.d/k3s.conf << 'EOF'
 br_netfilter
 overlay
 EOF
 modprobe br_netfilter && modprobe overlay
 
-cat > /etc/sysctl.d/99-rke2.conf << 'EOF'
+cat > /etc/sysctl.d/99-k3s.conf << 'EOF'
 net.bridge.bridge-nf-call-iptables  = 1
 net.bridge.bridge-nf-call-ip6tables = 1
 net.ipv4.ip_forward                 = 1

@@ -11,10 +11,10 @@
 2. **Rancher** generates a registration command
 3. **You** run a prep script on all your VMs
 4. **You** run the registration command on your VMs
-5. **Rancher** installs RKE2 automatically and registers each node
+5. **Rancher** installs K3s automatically and registers each node
 6. The cluster goes **Active** in the Rancher UI
 
-**You do NOT install RKE2 manually — Rancher does it for you.**
+**You do NOT install K3s manually — Rancher does it for you.**
 
 ---
 

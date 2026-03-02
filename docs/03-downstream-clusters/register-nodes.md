@@ -81,13 +81,13 @@ When it says **Active**, your cluster is fully operational!
 When you ran that registration command:
 
 1. The **Rancher System Agent** installed on the node
-2. The System Agent downloaded and installed **RKE2**
+2. The System Agent downloaded and installed **K3s**
 3. The node bootstrapped Kubernetes
 4. **cattle-cluster-agent** and **cattle-node-agent** deployed automatically
 5. The agents opened a WebSocket tunnel back to Rancher
 6. Rancher registered the node and started managing the cluster
 
-All of this happened automatically — you didn't install RKE2, configure etcd, or set up networking manually. Rancher handled it.
+All of this happened automatically — you didn't install K3s, configure etcd, or set up networking manually. Rancher handled it.
 
 ---
 
@@ -117,8 +117,8 @@ journalctl -u rancher-system-agent -f
 ### Need to re-register a node
 
 ```bash
-/usr/local/bin/rke2-uninstall.sh        # if it was a server node
-/usr/local/bin/rke2-agent-uninstall.sh   # if it was an agent node
+/usr/local/bin/k3s-uninstall.sh          # if it was a server node
+/usr/local/bin/k3s-agent-uninstall.sh    # if it was an agent node
 
 # Then re-run the registration command
 ```

@@ -1,4 +1,4 @@
-# Phase 2 — First Master (k01m1)
+# Phase 2 — First Server (k01m1)
 
 SSH into k01m1:
 
@@ -8,99 +8,116 @@ ssh root@10.188.1.11
 
 ---
 
-## 2.1 Create the RKE2 Config
+## 2.1 Install K3s (First Server — Initialises the Cluster)
 
 ```bash
-mkdir -p /etc/rancher/rke2
-
-cat > /etc/rancher/rke2/config.yaml << 'EOF'
-token: PASTE_YOUR_RKE2_TOKEN_HERE
-cni: calico
-tls-san:
-  - 10.188.1.11
-  - 10.188.1.12
-  - 10.188.1.13
-  - 10.188.1.100
-  - steve.k.ma-no.si
-  - 46.54.226.201
-write-kubeconfig-mode: "0644"
-etcd-expose-metrics: true
-EOF
+curl -sfL https://get.k3s.io | K3S_TOKEN="PASTE_YOUR_K3S_TOKEN_HERE" \
+  INSTALL_K3S_EXEC="server \
+    --cluster-init \
+    --flannel-backend=none \
+    --disable-network-policy \
+    --disable=traefik \
+    --disable=servicelb \
+    --tls-san=10.188.1.11 \
+    --tls-san=10.188.1.12 \
+    --tls-san=10.188.1.13 \
+    --tls-san=10.188.1.100 \
+    --tls-san=steve.k.ma-no.si \
+    --tls-san=46.54.226.201 \
+    --write-kubeconfig-mode=644 \
+    --etcd-expose-metrics" sh -
 ```
 
 !!! warning "Replace the token"
-    Replace `PASTE_YOUR_RKE2_TOKEN_HERE` with the token from Phase 0.
+    Replace `PASTE_YOUR_K3S_TOKEN_HERE` with the token from Phase 0.
 
-| Config Key | Why |
-|-----------|-----|
-| `cni: calico` | Use Calico instead of default Canal |
-| `tls-san` | API server certificate is valid from all access points |
-| `write-kubeconfig-mode` | Makes kubeconfig readable without root |
-| `etcd-expose-metrics` | Enables Prometheus scraping of etcd |
-
----
-
-## 2.2 Create the Calico HelmChartConfig (MTU 9000)
-
-!!! danger "This MUST be created BEFORE starting RKE2"
-    RKE2 auto-deploys any manifests in this directory on first boot. If Calico starts with the wrong MTU, you'll need to restart.
-
-```bash
-mkdir -p /var/lib/rancher/rke2/server/manifests
-
-cat > /var/lib/rancher/rke2/server/manifests/rke2-calico-config.yaml << 'EOF'
----
-apiVersion: helm.cattle.io/v1
-kind: HelmChartConfig
-metadata:
-  name: rke2-calico
-  namespace: kube-system
-spec:
-  valuesContent: |-
-    installation:
-      calicoNetwork:
-        mtu: 9000
-EOF
-```
-
-> **Why MTU 9000?** The Hyper-V network supports jumbo frames. Matching Calico's MTU avoids fragmentation and improves pod-to-pod throughput.
+| Flag | Why |
+|------|-----|
+| `--cluster-init` | Initialises a new HA cluster with embedded etcd |
+| `--flannel-backend=none` | Disables Flannel — we're using Calico instead |
+| `--disable-network-policy` | Disables K3s built-in network policy controller — Calico handles this |
+| `--disable=traefik` | Disables built-in Traefik ingress — we manage our own |
+| `--disable=servicelb` | Disables built-in service load balancer |
+| `--tls-san` | API server certificate valid from all access points |
+| `--write-kubeconfig-mode=644` | Makes kubeconfig readable without root |
+| `--etcd-expose-metrics` | Enables Prometheus scraping of etcd |
 
 ---
 
-## 2.3 Install and Start RKE2
+## 2.2 Configure kubectl
 
 ```bash
-curl -sfL https://get.rke2.io | sh -
-systemctl enable rke2-server.service
-systemctl start rke2-server.service
-```
-
-## 2.4 Watch the Logs
-
-```bash
-journalctl -u rke2-server -f
-```
-
-Wait until you see the node registered (2-3 minutes). Press `Ctrl+C` to exit.
-
----
-
-## 2.5 Configure kubectl
-
-```bash
-echo 'export PATH=$PATH:/var/lib/rancher/rke2/bin' >> ~/.bashrc
-echo 'export KUBECONFIG=/etc/rancher/rke2/rke2.yaml' >> ~/.bashrc
+echo 'export KUBECONFIG=/etc/rancher/k3s/k3s.yaml' >> ~/.bashrc
 source ~/.bashrc
-
-ln -sf /var/lib/rancher/rke2/bin/kubectl /usr/local/bin/kubectl
 
 kubectl get nodes
 ```
 
 Expected:
 ```
-NAME    STATUS   ROLES                       AGE   VERSION
-k01m1   Ready    control-plane,etcd,master   2m    v1.x.x+rke2r1
+NAME    STATUS     ROLES                       AGE   VERSION
+k01m1   NotReady   control-plane,etcd,master   30s   v1.x.x+k3s1
 ```
 
-✅ **First master is up!**
+!!! info "NotReady is expected"
+    The node shows `NotReady` because there's no CNI installed yet. Flannel was disabled and Calico hasn't been deployed. That's the next step.
+
+---
+
+## 2.3 Install Calico
+
+Install the Tigera operator and CRDs:
+
+```bash
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.29.3/manifests/tigera-operator.yaml
+```
+
+Wait for the operator to be ready:
+
+```bash
+kubectl rollout status deployment tigera-operator -n tigera-operator
+```
+
+Create the Calico custom resources:
+
+```bash
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.29.3/manifests/custom-resources.yaml
+```
+
+!!! tip "Calico version"
+    Check [github.com/projectcalico/calico/releases](https://github.com/projectcalico/calico/releases) for the latest version. Replace `v3.29.3` if a newer stable release is available.
+
+---
+
+## 2.4 Wait for Calico and Node Ready
+
+```bash
+watch kubectl get pods -n calico-system
+```
+
+Once all Calico pods are Running:
+
+```bash
+kubectl get nodes
+```
+
+Expected:
+```
+NAME    STATUS   ROLES                       AGE   VERSION
+k01m1   Ready    control-plane,etcd,master   3m    v1.x.x+k3s1
+```
+
+The node transitions from `NotReady` to `Ready` once Calico provides the CNI.
+
+---
+
+## 2.5 Verify
+
+```bash
+kubectl get pods -A
+kubectl get pods -n calico-system
+```
+
+All pods should be `Running`.
+
+First server is up with Calico!

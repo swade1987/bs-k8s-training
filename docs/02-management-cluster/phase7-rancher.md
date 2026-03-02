@@ -96,18 +96,18 @@ kubectl cluster-info
 ### Node won't join
 
 ```bash
-journalctl -u rke2-server -f   # masters
-journalctl -u rke2-agent -f    # workers
+journalctl -u k3s -f         # server nodes
+journalctl -u k3s-agent -f   # agent nodes
 
 # Test connectivity
-curl -k https://10.188.1.11:9345
+curl -k https://10.188.1.11:6443
 ```
 
 ### Need to start over on a node
 
 ```bash
-/usr/local/bin/rke2-uninstall.sh        # server nodes
-/usr/local/bin/rke2-agent-uninstall.sh   # agent nodes
+/usr/local/bin/k3s-uninstall.sh          # server nodes
+/usr/local/bin/k3s-agent-uninstall.sh    # agent nodes
 ```
 
 ### Rancher pods crashing

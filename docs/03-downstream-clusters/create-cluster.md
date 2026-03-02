@@ -16,7 +16,7 @@
 | Field | Value |
 |-------|-------|
 | **Cluster Name** | `lab-XX-name` (e.g., `lab-02-aleksander`) |
-| **Kubernetes Version** | Latest stable RKE2 |
+| **Kubernetes Version** | Latest stable K3s |
 | **Container Network** | **Calico** :material-alert: Not Canal |
 
 6. Click **Create**
