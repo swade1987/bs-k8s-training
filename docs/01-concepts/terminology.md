@@ -19,16 +19,15 @@ A quick reference for all the terms used in this training.
 | **Secret** | Stores sensitive data (passwords, tokens, keys) |
 | **PersistentVolume** | A piece of storage provisioned in the cluster |
 
-## RKE2 & Calico
+## K3s & Calico
 
 | Term | What it is |
 |------|-----------|
-| **RKE2** | Rancher Kubernetes Engine 2 — CIS-hardened Kubernetes distribution |
+| **K3s** | Lightweight CNCF-certified Kubernetes distribution — single binary, minimal footprint |
 | **Calico** | Our CNI plugin — handles pod networking and network policy |
 | **CNI** | Container Network Interface — the standard for Kubernetes networking plugins |
-| **MTU** | Maximum Transmission Unit — we use 9000 (jumbo frames) for better throughput |
-| **HelmChartConfig** | RKE2 resource to customise bundled Helm charts (e.g. Calico) |
-| **containerd** | The container runtime used by RKE2 (instead of Docker) |
+| **Flannel** | Alternative CNI (simpler but no network policies) |
+| **containerd** | The container runtime used by K3s (instead of Docker) |
 
 ## Rancher
 
