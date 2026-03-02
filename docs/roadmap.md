@@ -1,86 +1,60 @@
 # Training Roadmap
 
-Five days. From VMs to production-ready GitOps platform.
+Five days. Building your Kubernetes platform together.
 
 ---
 
-## Day 1 — Infrastructure & Cluster Build :material-check-circle:{ .green }
+## Day 1 — Kubernetes Fundamentals & Management Cluster :material-check-circle:{ .green }
 
-**Status:** Ready
+**Status:** Complete
 
-Build the foundation. Management cluster, downstream clusters, Rancher multi-cluster management.
+Building shared understanding before touching infrastructure. Kubernetes architecture, core resources, networking model, and how it all fits together - then applying it to the management cluster build.
 
-- [x] Kubernetes & Rancher architecture concepts
-- [x] RKE2 management cluster build (Steve-led demo)
-- [x] Downstream cluster provisioning via Rancher (hands-on)
-- [x] Calico CNI with MTU 9000
-- [x] Workstation setup and kubectl access
+- [x] Kubernetes architecture - control plane, workers, etcd, API server
+- [x] Core resources - Pods, Deployments, Services etc
+- [x] Networking model - CNI, Services, DNS, ingress
+- [x] Container runtime and container patterns
+- [x] Rancher overview
+- [x] Management cluster build begins
 
-**By end of day:** 9 clusters, 63 nodes, all managed from a single Rancher dashboard.
-
-[:material-arrow-right: Start Day 1](01-concepts/kubernetes.md)
-
----
-
-## Day 2 — GitOps with Flux :material-lock-outline:
-
-**Status:** Unlocks tomorrow
-
-Git becomes the single source of truth. Every deployment, every config change — driven by commits, not commands.
-
-- Flux installation and bootstrapping
-- Repository structure for GitOps
-- First application deployed via Git
-- Reconciliation and self-healing in action
-- Kustomize overlays for environment separation
-
-**By end of day:** Your cluster auto-deploys from Git. Push a commit, watch it appear.
+[:material-arrow-right: Day 1 Content](01-concepts/kubernetes.md)
 
 ---
 
-## Day 3 — Observability & Monitoring :material-lock-outline:
+## Day 2 — Downstream Clusters + GitOps with Flux :material-lock-outline:
 
-**Status:** Coming soon
+**Status:** Tomorrow
 
-You can't manage what you can't see. Build the monitoring stack that gives you visibility across the platform.
+Complete the cluster builds, then move into GitOps. Git becomes the single source of truth.
 
-- Prometheus and Grafana deployment
-- Cluster health dashboards
-- Alerting rules and thresholds
-- Log aggregation
-- Monitoring node configuration
+- [ ] Complete management cluster (Rancher operational)
+- [ ] Downstream cluster provisioning via Rancher (hands-on)
+- [ ] Workstation setup and kubectl access
+- [ ] Design a cluster naming convention for your fleet
+- [ ] Install Flux Operator and bootstrap from the fleet repo
+- [ ] The four-repo model: fleet, platform, DMS, secrets
+- [ ] First GitOps deployments (platform + DMS)
+- [ ] Centralised secrets with SOPS + age encryption
 
-**By end of day:** Dashboards showing real-time cluster and application health.
-
----
-
-## Day 4 — Security & Access Control :material-lock-outline:
-
-**Status:** Coming soon
-
-Lock it down. RBAC, network policies, secrets management — the controls that make this production-grade.
-
-- RBAC design and implementation
-- Network policies for namespace isolation
-- Secrets management patterns
-- Pod security standards
-
-**By end of day:** Properly secured cluster with least-privilege access and network segmentation.
+**By end of day:** Clusters operational and managed through Git. Four repos, clear ownership, encrypted secrets.
 
 ---
 
-## Day 5 — Production Readiness :material-lock-outline:
+## Day 3 :material-lock-outline:
 
-**Status:** Coming soon
+**Status:** Content added based on progress
 
-The bridge from training environment to real-world platform. Everything you need to take this into production.
+---
 
-- Production deployment checklist
-- Backup and disaster recovery
-- Upgrade strategies
-- Capacity planning
+## Day 4 :material-lock-outline:
 
-**By end of day:** A clear path from where you are to where you need to be.
+**Status:** Content added based on progress
+
+---
+
+## Day 5 :material-lock-outline:
+
+**Status:** Content added based on progress
 
 ---
 
