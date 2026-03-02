@@ -5,7 +5,6 @@ repo_url: https://github.com/swade1987/bs-k8s-training
 edit_uri: ""
 site_dir: public
 
-
 theme:
   name: material
   palette:
@@ -77,14 +76,14 @@ nav:
     - "Terminology Reference": 01-concepts/terminology.md
   - "2. Management Cluster":
     - "Overview": 02-management-cluster/index.md
-    - "Phase 0 — Generate Token": 02-management-cluster/phase0-token.md
-    - "Phase 1 — Prepare All Nodes": 02-management-cluster/phase1-prep.md
-    - "Phase 2 — First Master (k01m1)": 02-management-cluster/phase2-first-master.md
-    - "Phase 3 — Join Masters": 02-management-cluster/phase3-join-masters.md
-    - "Phase 4 — Join Workers": 02-management-cluster/phase4-join-workers.md
-    - "Phase 5 — Install Helm": 02-management-cluster/phase5-helm.md
-    - "Phase 6 — Install cert-manager": 02-management-cluster/phase6-cert-manager.md
-    - "Phase 7 — Install Rancher": 02-management-cluster/phase7-rancher.md
+    - "Phase 0 - Generate Token": 02-management-cluster/phase0-token.md
+    - "Phase 1 - Prepare All Nodes": 02-management-cluster/phase1-prep.md
+    - "Phase 2 - First Master (k01m1)": 02-management-cluster/phase2-first-master.md
+    - "Phase 3 - Join Masters": 02-management-cluster/phase3-join-masters.md
+    - "Phase 4 - Join Workers": 02-management-cluster/phase4-join-workers.md
+    - "Phase 5 - Install Helm": 02-management-cluster/phase5-helm.md
+    - "Phase 6 - Install cert-manager": 02-management-cluster/phase6-cert-manager.md
+    - "Phase 7 - Install Rancher": 02-management-cluster/phase7-rancher.md
   - "3. Downstream Clusters":
     - "Overview": 03-downstream-clusters/index.md
     - "Prepare Your VMs": 03-downstream-clusters/prepare-vms.md
@@ -96,7 +95,11 @@ nav:
     - "Get Your Kubeconfig": 04-workstation-setup/kubeconfig.md
     - "Verify Access": 04-workstation-setup/verify.md
   - "5. GitOps with Flux":
-    - "Coming Soon": 05-gitops/index.md
+    - "1 - Overview": 05-gitops/index.md
+    - "2 - Fleet Design": 05-gitops/fleet-design.md
+    - "3 - Install Flux Operator": 05-gitops/install-operator.md
+    - "4 - Create FluxInstance": 05-gitops/create-instance.md
+    - "5 - Cluster Configuration": 05-gitops/cluster-config.md
 
 extra:
   social: []
