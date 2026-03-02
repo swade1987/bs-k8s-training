@@ -1,6 +1,4 @@
-site_name: "CloudRISE Kubernetes Training"
-site_description: "RKE2, Rancher & GitOps — Training Guide for Business Solutions d.o.o."
-site_author: "Steve Wade"
+site_name: CloudRISE Kubernetes Training
 site_url: https://swade1987.github.io/bs-k8s-training
 repo_name: swade1987/bs-k8s-training
 repo_url: https://github.com/swade1987/bs-k8s-training
