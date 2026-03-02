@@ -5,6 +5,7 @@ repo_url: https://github.com/swade1987/bs-k8s-training
 edit_uri: ""
 site_dir: public
 
+
 theme:
   name: material
   palette:
