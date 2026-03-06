@@ -1,0 +1,19 @@
+# 01-namespaces.yaml
+# Creates two isolated customer namespaces to demonstrate tenant isolation
+# Maps to SOW deliverable: "Network isolation validated"
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: customer-a
+  labels:
+    tenant: customer-a
+
+---
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: customer-b
+  labels:
+    tenant: customer-b

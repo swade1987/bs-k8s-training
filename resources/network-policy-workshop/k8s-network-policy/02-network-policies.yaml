@@ -1,0 +1,80 @@
+# 02-network-policies.yaml
+# Enforces namespace isolation using Calico NetworkPolicy
+# Maps to SOW deliverable: "Network policy configuration" and "Resource isolation to prevent customer interference"
+
+# ── Default deny ALL ingress and egress for customer-a ──────────────────────
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: customer-a
+spec:
+  podSelector: {}        # applies to every pod in the namespace
+  policyTypes:
+    - Ingress
+    - Egress
+
+---
+
+# ── Allow pods within customer-a to talk to each other ──────────────────────
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-same-namespace
+  namespace: customer-a
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector: {}          # any pod in THIS namespace
+  egress:
+    - to:
+        - podSelector: {}          # any pod in THIS namespace
+    # Allow DNS resolution (required for service discovery)
+    - ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+
+---
+
+# ── Same default-deny for customer-b ────────────────────────────────────────
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: customer-b
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+
+---
+
+# ── Allow pods within customer-b to talk to each other ──────────────────────
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-same-namespace
+  namespace: customer-b
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector: {}
+  egress:
+    - to:
+        - podSelector: {}
+    - ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53

@@ -1,0 +1,69 @@
+# 03-calico-allow-system.yaml
+# Without this, the GlobalNetworkPolicy default-deny will also block:
+#   - kube-dns / CoreDNS (breaks all service discovery)
+#   - Calico's own health checks and Felix communications
+#   - The Kubernetes API server communication
+#
+# This policy allows that system traffic explicitly before the deny kicks in.
+# Order: 10 — evaluated before everything else.
+
+# ── Allow kube-dns so CoreDNS can function ───────────────────────────────────
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: allow-kube-dns
+spec:
+  order: 10
+  namespaceSelector: projectcalico.org/name == 'kube-system'
+  selector: k8s-app == 'kube-dns'
+  types:
+    - Ingress
+    - Egress
+  ingress:
+    - action: Allow
+  egress:
+    - action: Allow
+
+---
+
+# ── Allow Calico internal components ─────────────────────────────────────────
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: allow-calico-internals
+spec:
+  order: 10
+  # Matches Calico system pods (Felix, IPAM, etc.)
+  namespaceSelector: projectcalico.org/name == 'calico-system' || projectcalico.org/name == 'kube-system'
+  selector: k8s-app == 'calico-node' || app == 'calico-node'
+  types:
+    - Ingress
+    - Egress
+  ingress:
+    - action: Allow
+  egress:
+    - action: Allow
+
+---
+
+# ── Allow all pods to reach the Kubernetes API server ────────────────────────
+# Without this, pods that need to talk to the API (operators, controllers) break.
+# Replace 10.96.0.1 with your actual kube-apiserver ClusterIP if different.
+# Run: kubectl get svc kubernetes -n default
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: allow-kube-apiserver
+spec:
+  order: 10
+  selector: all()
+  types:
+    - Egress
+  egress:
+    - action: Allow
+      protocol: TCP
+      destination:
+        # kube-apiserver service ClusterIP — default is 10.96.0.1
+        # Verify with: kubectl get svc kubernetes -n default -o jsonpath='{.spec.clusterIP}'
+        nets: ["10.96.0.1/32"]
+        ports: [443, 6443]

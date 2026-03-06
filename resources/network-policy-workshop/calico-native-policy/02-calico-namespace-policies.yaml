@@ -1,0 +1,72 @@
+# 02-calico-namespace-policies.yaml
+# Calico NetworkPolicy (namespaced) — per-tenant isolation rules
+# Uses crd.projectcalico.org/v1 NetworkPolicy (NOT the K8s one)
+#
+# Structure:
+#   - customer-a pods can only talk to other customer-a pods + DNS
+#   - customer-b pods can only talk to other customer-b pods + DNS
+#   - Cross-namespace traffic is denied by the GlobalNetworkPolicy above
+
+# ── Allow intra-namespace traffic for customer-a ─────────────────────────────
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: allow-same-namespace
+  namespace: customer-a
+spec:
+  # Lower order than the global deny (100 < 1000) so this is evaluated first
+  order: 100
+  selector: all()
+  types:
+    - Ingress
+    - Egress
+  ingress:
+    - action: Allow
+      source:
+        # Only allow traffic from pods in the same namespace
+        namespaceSelector: projectcalico.org/name == 'customer-a'
+  egress:
+    - action: Allow
+      destination:
+        # Only allow traffic to pods in the same namespace
+        namespaceSelector: projectcalico.org/name == 'customer-a'
+    # Allow DNS egress so service discovery works
+    - action: Allow
+      protocol: UDP
+      destination:
+        ports: [53]
+    - action: Allow
+      protocol: TCP
+      destination:
+        ports: [53]
+
+---
+
+# ── Allow intra-namespace traffic for customer-b ─────────────────────────────
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: allow-same-namespace
+  namespace: customer-b
+spec:
+  order: 100
+  selector: all()
+  types:
+    - Ingress
+    - Egress
+  ingress:
+    - action: Allow
+      source:
+        namespaceSelector: projectcalico.org/name == 'customer-b'
+  egress:
+    - action: Allow
+      destination:
+        namespaceSelector: projectcalico.org/name == 'customer-b'
+    - action: Allow
+      protocol: UDP
+      destination:
+        ports: [53]
+    - action: Allow
+      protocol: TCP
+      destination:
+        ports: [53]

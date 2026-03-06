@@ -1,0 +1,23 @@
+# 01-calico-global-deny.yaml
+# Calico GlobalNetworkPolicy — applies to ALL namespaces cluster-wide
+# This is the Calico-native equivalent of a default-deny, using crd.projectcalico.org/v1
+#
+# Key difference from standard K8s NetworkPolicy:
+#   - Applies globally, not per-namespace
+#   - Uses Calico's order field (lower = higher priority)
+#   - Supports host endpoints, not just pods
+#   - Uses action: Deny explicitly (K8s NetworkPolicy denies implicitly by omission)
+
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: default-deny-all
+spec:
+  # Lower order = evaluated first. 1000 is a safe baseline for a default-deny.
+  order: 1000
+  # Empty selector = applies to every pod in every namespace
+  selector: all()
+  types:
+    - Ingress
+    - Egress
+  # No ingress or egress rules = deny everything not explicitly permitted
